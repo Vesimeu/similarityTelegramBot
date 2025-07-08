@@ -10,7 +10,6 @@ import traceback
 import colorama
 import math
 import aiohttp
-
 from typing import Dict, Any
 #import datetime
 from pymongo import errors as pymongo_errors
@@ -20,31 +19,21 @@ from pymongo import ReturnDocument
 from pymongo.errors import ServerSelectionTimeoutError, ConnectionFailure
 import sys
 import io
-
 from quest_engine import QuestEngine
-
 from bson import Binary
 from typing import List, Dict, Tuple
-
 from collections import defaultdict
-
 from typing import Dict, List, Union
 from soul_connection import SoulOracle
-
 from datetime import datetime 
 from typing import Dict, List
 from geopy.distance import geodesic 
 
 from config import BOT_TOKEN, ADMIN_ID, MONGODB_HOST, MONGODB_PORT, TARGET_CHAT_ID
-
-
-
-
 CONTACT_BUTTON_ENABLED = True  # Можно отключать все кнопки контактов
 
 # Настройка кодировки для корректного вывода emoji
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-
 
 # Глобальный словарь для хранения текущих результатов поиска
 current_search_results = {}
@@ -1028,8 +1017,6 @@ async def toggle_profile_links_mode(message: types.Message):
     """
     try:
         # Конфигурация администратора
-        # ADMIN_ID = 5293550458  # Ваш подтвержденный ID
-        
         # Проверка прав доступа
         if message.from_user.id != ADMIN_ID:
             # Логирование попытки доступа
@@ -1523,7 +1510,7 @@ async def cmd_test_search(message: types.Message):
     user_id = message.from_user.id
     
     # 1. Проверяем, что пользователь — администратор или тестер
-    ADMIN_IDS = [5293550458]  # Замените на ваш ID и тестовые
+    ADMIN_IDS = [ADMIN_ID]  # Замените на ваш ID и тестовые
     if message.from_user.id not in ADMIN_IDS:
         return await bot.reply_to(message, "❌ Команда только для тестирования")
     
