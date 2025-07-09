@@ -10,8 +10,11 @@ from keyboards.keyboards import gender_keyboard, preferred_gender_keyboard, main
 from texts.texts import WELCOME_TEXT, WELCOME_SCROLL
 # TODO: импортировать остальные тексты и клавиатуры по мере необходимости
 from datetime import datetime
+from utils.state_service import StateService
 
-async def cmd_update_profile(bot, message, profile_service: ProfileService, user_data):
+# Все функции теперь принимают state_service вместо user_data
+
+async def cmd_update_profile(bot, message, profile_service: ProfileService, state_service: StateService):
     user_id = message.from_user.id
     chat_id = message.chat.id
     try:
@@ -35,12 +38,13 @@ async def cmd_update_profile(bot, message, profile_service: ProfileService, user
             "🖋️ Пожалуйста, введите ваше имя:",
             reply_markup=types.ForceReply()
         )
-        user_data[user_id] = {"step": "waiting_for_name", "registration": True}
+        # Сохраняем состояние пользователя через state_service
+        state_service.set_user_state(user_id, {"step": "waiting_for_name", "registration": True})
     except Exception as e:
         logger.error(f"Ошибка в cmd_update_profile: {e}")
         await bot.send_message(user_id, "Пожалуйста, введите ваше имя:")
 
-async def handle_name_input(bot, message, profile_service: ProfileService, user_data):
+async def handle_name_input(bot, message, profile_service: ProfileService, state_service: StateService):
     user_id = message.from_user.id
     name = message.text.strip()
     try:
@@ -78,7 +82,10 @@ async def handle_name_input(bot, message, profile_service: ProfileService, user_
                 parse_mode="Markdown",
                 # reply_markup=gender_keyboard
             )
-            user_data[user_id]["step"] = "waiting_for_gender"
+            # Обновляем шаг пользователя через state_service
+            state = state_service.get_user_state(user_id)
+            state["step"] = "waiting_for_gender"
+            state_service.set_user_state(user_id, state)
         else:
             await bot.edit_message_text(
                 f"💔 *О, светлейший(ая) {name}!\nЧернильные феи уронили хрустальный флакон...\n\n✨ *Не тревожьтесь!* Просто впишите своё имя ещё раз:",
@@ -102,7 +109,7 @@ async def handle_name_input(bot, message, profile_service: ProfileService, user_
             reply_markup=types.ForceReply()
         ) 
 
-async def handle_gender_input(bot, message, profile_service: ProfileService, user_data):
+async def handle_gender_input(bot, message, profile_service: ProfileService, state_service: StateService):
     user_id = message.from_user.id
     chat_id = message.chat.id
     gender = message.text
@@ -140,8 +147,11 @@ async def handle_gender_input(bot, message, profile_service: ProfileService, use
                 "🧙 *Мудрец-хронолог вопрошает:*\n⌛ **Сколько зим вы видели, благородный искатель?**\n\n_Укажите ваш возраст цифрами (от 18 до 99)_\n✨ Вы увидите только тех, кто ищет ваш возраст",
                 parse_mode="Markdown"
             )
-            user_data[user_id]["step"] = "waiting_for_age"
-            user_data[user_id]["age_msg_id"] = age_msg.message_id
+            # Обновляем шаг пользователя через state_service
+            state = state_service.get_user_state(user_id)
+            state["step"] = "waiting_for_age"
+            state_service.set_user_state(user_id, state)
+            state["age_msg_id"] = age_msg.message_id
         else:
             await bot.edit_message_text(
                 "💥 *Чернила внезапно воспламенились!*\n❌ Не удалось сохранить пол",
@@ -159,7 +169,7 @@ async def handle_gender_input(bot, message, profile_service: ProfileService, use
         logger.error(f"Ошибка в handle_gender_input: {e}")
         await bot.send_message(chat_id, "Произошла ошибка при выборе пола.")
 
-async def handle_age_input(bot, message, profile_service: ProfileService, user_data):
+async def handle_age_input(bot, message, profile_service: ProfileService, state_service: StateService):
     user_id = message.from_user.id
     chat_id = message.chat.id
     text = message.text
@@ -211,8 +221,11 @@ async def handle_age_input(bot, message, profile_service: ProfileService, user_d
                 "🎯 *Лучник-картограф вопрошает ....:*\n🏹 **В каком диапазоне искать Вам достойных спутников?**\n\n_О вы само благородство! Укажите предпочитаемый возраст партнера формате 'min-max' (например: 25-35)_\n✨ Ваше сиятельство вы увидите только тех, чьи предпочтения совпадают с вашим возрастом",
                 parse_mode="Markdown"
             )
-            user_data[user_id]["step"] = "waiting_for_preferred_age"
-            user_data[user_id]["pref_msg_id"] = pref_msg.message_id
+            # Обновляем шаг пользователя через state_service
+            state = state_service.get_user_state(user_id)
+            state["step"] = "waiting_for_preferred_age"
+            state_service.set_user_state(user_id, state)
+            state["pref_msg_id"] = pref_msg.message_id
         else:
             await bot.edit_message_text(
                 "💥 *Чернильное пятно испортило пергамент!*\n❌ Не удалось сохранить возраст в архивах",
@@ -229,7 +242,7 @@ async def handle_age_input(bot, message, profile_service: ProfileService, user_d
         logger.error(f"Ошибка в handle_age_input: {e}")
         await bot.send_message(chat_id, "Произошла ошибка при вводе возраста.")
 
-async def handle_preferred_age_input(bot, message, profile_service: ProfileService, user_data):
+async def handle_preferred_age_input(bot, message, profile_service: ProfileService, state_service: StateService):
     user_id = message.from_user.id
     chat_id = message.chat.id
     text = message.text
@@ -275,7 +288,10 @@ async def handle_preferred_age_input(bot, message, profile_service: ProfileServi
                 parse_mode="Markdown",
                 # reply_markup=preferred_gender_keyboard
             )
-            user_data[user_id]["step"] = "waiting_for_preferred_gender"
+            # Обновляем шаг пользователя через state_service
+            state = state_service.get_user_state(user_id)
+            state["step"] = "waiting_for_preferred_gender"
+            state_service.set_user_state(user_id, state)
         else:
             await bot.edit_message_text(
                 "💥 *Чернильное пятно испортило пергамент!*\n❌ Не удалось сохранить диапазон в архивах",
@@ -293,7 +309,7 @@ async def handle_preferred_age_input(bot, message, profile_service: ProfileServi
         logger.error(f"Ошибка в handle_preferred_age_input: {e}")
         await bot.send_message(chat_id, "Произошла ошибка при вводе диапазона.")
 
-async def handle_preferred_gender_input(bot, message, profile_service: ProfileService, user_data):
+async def handle_preferred_gender_input(bot, message, profile_service: ProfileService, state_service: StateService):
     user_id = message.from_user.id
     chat_id = message.chat.id
     gender = message.text
@@ -311,7 +327,8 @@ async def handle_preferred_gender_input(bot, message, profile_service: ProfileSe
                 f"✅ Предпочитаемый пол сохранён: {gender}",
                 # reply_markup=main_menu_keyboard
             )
-            user_data.pop(user_id, None)
+            # Сбрасываем состояние пользователя через state_service
+            state_service.clear_user_state(user_id)
         else:
             await bot.send_message(
                 chat_id,
