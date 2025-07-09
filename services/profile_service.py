@@ -1,6 +1,15 @@
 from db.mongo import MongoDB
 
 class ProfileService:
+    """
+    Сервис управления профилями пользователей.
+
+    - get_profile: получить профиль пользователя по user_id.
+    - update_profile: обновить профиль пользователя.
+    - create_profile: создать новый профиль (если не существует).
+
+    Использует универсальный слой работы с БД (db.mongo).
+    """
     def __init__(self, db: MongoDB):
         self.db = db
 

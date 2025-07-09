@@ -5,6 +5,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 class MongoDB:
+    """
+    Универсальный асинхронный слой работы с MongoDB.
+
+    - connect: подключение к базе.
+    - get_collection: получить коллекцию по имени.
+    - get_profile, update_profile: универсальные методы для работы с профилями.
+    - get_poll, get_admin_settings: примеры универсальных методов для других сущностей.
+
+    Используется всеми сервисами для доступа к данным.
+    """
     def __init__(self):
         self.client = None
         self.db = None
