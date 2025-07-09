@@ -30,6 +30,7 @@ from typing import Dict, List
 from geopy.distance import geodesic 
 
 from config import BOT_TOKEN, ADMIN_ID, MONGODB_HOST, MONGODB_PORT, TARGET_CHAT_ID
+
 CONTACT_BUTTON_ENABLED = True  # Можно отключать все кнопки контактов
 
 # Настройка кодировки для корректного вывода emoji
