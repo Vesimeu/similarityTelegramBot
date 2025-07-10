@@ -1,18 +1,16 @@
 import asyncio
 import random
 from telebot import types
-from config import BOT_TOKEN
-from services.profile_service import ProfileService
-from db.mongo import MongoDB
+from main import bot,logger
+from telebot.async_telebot import AsyncTeleBot
 import logging
 
-logger = logging.getLogger(__name__)
 
-# Импортируй keyboards и тексты, когда они будут вынесены
+# Импортируйте сервисы и main_menu_keyboard по мере необходимости
+# from services.profile_service import ProfileService
 # from keyboards.keyboards import main_menu_keyboard
-# from texts.texts import WELCOME_SCROLL, WELCOME_TEXT
 
-async def show_welcome_scroll(bot, user_id):
+async def show_welcome_scroll(user_id: int):
     scroll = """
 ✨ *Хрустальный Эдикт Светлейшего Совета* ✨
 
@@ -43,7 +41,8 @@ async def show_welcome_scroll(bot, user_id):
         )
     )
 
-async def handle_start(bot, message, profile_service: ProfileService):
+@bot.message_handler(commands=['start'])
+async def handle_start(message: types.Message):
     user_id = message.from_user.id
     try:
         scroll_steps = [
@@ -66,12 +65,15 @@ async def handle_start(bot, message, profile_service: ProfileService):
                 message_id=scroll_msg.message_id,
                 parse_mode="Markdown"
             )
-        profile = await profile_service.get_profile(user_id)
-        if not profile or not profile.get("is_completed", False):
+        # Здесь должна быть логика проверки профиля через сервис (заглушка)
+        profile = None  # TODO: получить профиль пользователя через сервис
+        if not profile or not getattr(profile, "is_completed", False):
             await bot.delete_message(user_id, scroll_msg.message_id)
-            if not profile or not profile.get("seen_welcome_scroll", False):
-                await show_welcome_scroll(bot, user_id)
-                await profile_service.update_profile(user_id, {"seen_welcome_scroll": True})
+            # TODO: проверить seen_welcome_scroll через сервис
+            seen_welcome_scroll = False
+            if not profile or not seen_welcome_scroll:
+                await show_welcome_scroll(user_id)
+                # TODO: обновить seen_welcome_scroll через сервис
                 return
             for _ in range(3):
                 candle = await bot.send_message(user_id, random.choice(["🕯️", "🌟", "🌠"]))

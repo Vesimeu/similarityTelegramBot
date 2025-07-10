@@ -10,6 +10,7 @@ import handlers.matching
 import handlers.analyze
 import handlers.settings
 import handlers.soul
+import handlers.start
 import handlers.admin
 import handlers.quest
 import handlers.geo
@@ -52,16 +53,16 @@ async def init_db():
 async def main():
     logger.info("Запуск Telegram-бота...")
     # 1. Подключение к базе данных
-    client, db = await init_db()
+    #client, db = await init_db()
     logger.info("База данных инициализирована.")
 
     # 2. Инициализация сервисов (пример)
-    profile_service = ProfileService(db)
-    matching_service = MatchingService(db)
-    poll_service = PollService(db)
-    soul_service = SoulService(db)
-    quest_service = QuestService(db)
-    state_service = StateService()
+    # profile_service = ProfileService(db)
+    # matching_service = MatchingService(db)
+    # poll_service = PollService(db)
+    # soul_service = SoulService(db)
+    # quest_service = QuestService(db)
+    # state_service = StateService()
 
     logger.info("Сервисы инициализированы.")
 
