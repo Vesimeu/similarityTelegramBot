@@ -3604,7 +3604,7 @@ async def main():
         logger.critical(f"Критическая ошибка при запуске: {str(e)}")
         raise
 
-if __name__ == "__main__":
+iif __name__ == "__main__":
     asyncio.run(main())
 
 print("Доступные команды бота:")
