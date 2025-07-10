@@ -58,7 +58,7 @@ async def handle_tournament(bot, message, quest_service: QuestService):
 async def handle_quest(bot, message, quest_service: QuestService):
     await quest_service.start_quest(message)
 
-# Для регистрации хендлеров в main.py или роутере:
+# Для регистрации хендлеров в main.py или роут  ере:
 # bot.register_message_handler(lambda m: m.text == "🌺@apbaabpa", handle_tournament)
 # bot.register_message_handler(commands=['quest'], handle_quest)
 # bot.register_message_handler(commands=['mangu'], handle_mangu_royal) 
