@@ -1,6 +1,6 @@
 import asyncio
 import random
-from telebot import types
+#from telebot import types
 import logging
 
 logger = logging.getLogger(__name__)

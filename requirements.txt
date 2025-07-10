@@ -1,6 +1,6 @@
 aiofiles==24.1.0
-aiohttp==3.11.12
-aiogram==3.20.0.post0
+aiohttp==3.8.6
+aiogram==2.23
 aiohappyeyeballs==2.4.6
 aiosignal==1.3.2
 annotated-types==0.7.0
@@ -54,7 +54,7 @@ pyperclip==1.9.0
 PyQt5==5.15.11
 PyQt5-Qt5==5.15.2
 PyQt5_sip==12.17.0
-pyTelegramBotAPI==4.26.0
+pyTelegramBotAPI==2.3.0
 pytest==8.3.5
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
