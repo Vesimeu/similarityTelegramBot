@@ -1,4 +1,4 @@
-from telebot import types
+from aiogram import types
 
 # Главная клавиатура меню
 main_menu_keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
